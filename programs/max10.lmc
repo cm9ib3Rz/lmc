@@ -1,0 +1,26 @@
+// max10.lmc - input 10 numbers, output the largest (a loop with a running maximum)
+// Input: 3 9 2 7 10 1 8 4 6 5      Output: 10
+        INP
+        STA max         // the first number is the largest so far
+        LDA nine
+        STA count       // 9 numbers still to come
+loop    INP
+        STA num
+        SUB max         // num - max
+        BRP bigger      // 0 or more, so num is at least as big as max
+next    LDA count
+        SUB one
+        STA count
+        BRZ done        // that was the last number
+        BRA loop
+bigger  LDA num
+        STA max         // remember the new largest
+        BRA next
+done    LDA max
+        OUT
+        HLT
+max     DAT
+num     DAT
+count   DAT
+nine    DAT 9
+one     DAT 1

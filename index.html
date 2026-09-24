@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Write, assemble, run and step through Little Man Computer (OCR A-Level) assembly, one fetch-decode-execute step at a time." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23002269'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='16' font-weight='700' text-anchor='middle' fill='white'%3ELMC%3C/text%3E%3C/svg%3E" />
+    <title>Little Man Computer (LMC) Simulator</title>
+  </head>
+  <body>
+    <header class="toolbar" role="banner">
+      <h1 title="LMC = Little Man Computer">Little Man Computer (LMC)</h1>
+
+      <label class="field">
+        <span>Example</span>
+        <select id="sel-example" aria-label="Load an example program"></select>
+      </label>
+
+      <div class="group" role="group" aria-label="Run controls">
+        <button type="button" id="btn-assemble" title="Assemble the program">Assemble</button>
+        <button type="button" id="btn-back" title="Undo the last step">◂ Back</button>
+        <button type="button" id="btn-step" class="primary" title="One register transfer (fetch, decode or execute step)">Step ▸</button>
+        <button type="button" id="btn-instr" title="Run to the end of the current instruction">Instruction ⏭</button>
+        <button type="button" id="btn-run" title="Run the program">Run ▶</button>
+        <button type="button" id="btn-reset" title="Return to the start">Reset ↺</button>
+      </div>
+
+      <div class="toolbar-tools">
+      <label class="field">
+        <span>Speed</span>
+        <select id="sel-speed" aria-label="Run speed">
+          <option value="slow">Slow (each step)</option>
+          <option value="medium" selected>Medium</option>
+          <option value="fast">Fast</option>
+          <option value="instant">Instant</option>
+        </select>
+      </label>
+
+      <div class="group" role="group" aria-label="Text size" title="Text size">
+        <button type="button" id="btn-font-dec" class="size-btn" aria-label="Make the text smaller" title="Make the text smaller"><span class="ta big" aria-hidden="true">A</span><span class="ta small" aria-hidden="true">A</span></button>
+        <button type="button" id="btn-font-inc" class="size-btn" aria-label="Make the text larger" title="Make the text larger"><span class="ta small" aria-hidden="true">A</span><span class="ta big" aria-hidden="true">A</span></button>
+      </div>
+
+      <button type="button" id="btn-ref" aria-controls="reference" aria-expanded="false">Reference</button>
+      </div>
+    </header>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <main class="layout">
+      <div class="col col-left">
+      <section class="card editor-card" aria-labelledby="h-program">
+        <div class="card-head">
+          <h2 id="h-program">Program</h2>
+          <span id="dirty-note" class="muted"></span>
+        </div>
+        <div class="editor">
+          <div class="gutter" id="gutter"></div>
+          <div class="code-wrap">
+            <div class="line-hl" id="line-hl" hidden></div>
+            <textarea id="source" spellcheck="false" wrap="off" autocapitalize="off" autocomplete="off" aria-label="LMC assembly source code"></textarea>
+          </div>
+        </div>
+        <p class="hint muted">New to the Little Man Computer? Open <b>Reference</b> and read <b>About the LMC</b>. Hover the numbers in the margin to see what each machine-code word means. Click a line number (or press F9 on a line) to set a breakpoint.</p>
+        <ul id="errors" class="errors" aria-label="Assembler errors" hidden></ul>
+      </section>
+
+      <section class="card cycle-card" aria-labelledby="h-cycle">
+        <div class="card-head">
+          <h2 id="h-cycle">Fetch–decode–execute</h2>
+          <button type="button" id="btn-instr-help" class="link" hidden></button>
+        </div>
+        <ol class="phases" id="phases" aria-label="Phase">
+          <li data-phase="fetch">Fetch</li>
+          <li data-phase="decode">Decode</li>
+          <li data-phase="execute">Execute</li>
+        </ol>
+        <div id="cycle-steps" class="cycle-steps" aria-live="polite"></div>
+      </section>
+
+      </div>
+
+      <div class="col col-right">
+      <section class="card regs-card" id="cpu-card" aria-labelledby="h-regs">
+        <div class="card-head">
+          <h2 id="h-regs">CPU and registers</h2>
+          <button type="button" class="link" id="btn-diagram" aria-controls="cpu-card" aria-pressed="true">Hide diagram</button>
+        </div>
+        <div class="cpu">
+          <span class="cpu-label" aria-hidden="true">CPU</span>
+          <div class="units" id="units"></div>
+          <div class="regs" id="regs"></div>
+        </div>
+        <div class="buses" id="buses"></div>
+        <div class="mem-wrap" id="mem-wrap"></div>
+        <p class="hint muted diagram-key">Yellow: a register or unit that has just been written or is doing the work. Blue dashed outline: a register being read. The buses use the colours of the steps in Fetch–decode–execute.</p>
+      </section>
+
+      <section class="card io-card" aria-label="Inbox and outbox">
+        <div class="io-grid">
+          <div>
+            <h2>Inbox</h2>
+            <label class="field stack">
+              <span class="muted">Numbers 0–999, separated by spaces or commas</span>
+              <input type="text" id="inbox-input" inputmode="numeric" autocomplete="off" />
+            </label>
+            <p id="inbox-msg" class="msg" hidden></p>
+            <div class="queue" id="inbox-queue" aria-label="Numbers waiting in the inbox"></div>
+          </div>
+          <div>
+            <h2>Outbox</h2>
+            <div class="queue outbox" id="outbox" aria-live="polite"></div>
+          </div>
+        </div>
+        <form id="input-prompt" class="prompt" hidden>
+          <label for="live-input">The program is waiting for a number:</label>
+          <div class="row">
+            <input type="text" id="live-input" inputmode="numeric" autocomplete="off" />
+            <button type="submit" class="primary">Send</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card memory-card" aria-labelledby="h-mem">
+        <div class="card-head">
+          <h2 id="h-mem">Memory (mailboxes 00–99)</h2>
+          <ul class="legend" aria-label="Legend">
+            <li class="k-next">next</li>
+            <li class="k-read">read</li>
+            <li class="k-write">write</li>
+          </ul>
+        </div>
+        <div class="memory" id="memory"></div>
+        <p class="hint muted">Double-click a mailbox to change its value.</p>
+      </section>
+      </div>
+
+      <section class="card trace-card" aria-labelledby="h-trace">
+        <details open>
+          <summary><h2 id="h-trace">Trace table</h2></summary>
+          <div class="table-scroll">
+            <table class="trace" id="trace">
+              <thead>
+                <tr><th>Step</th><th>PC</th><th>CIR</th><th>Instruction</th><th>ACC after</th><th>Mailbox change</th><th>Output</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p id="trace-note" class="muted" hidden></p>
+        </details>
+      </section>
+    </main>
+
+    <aside id="reference" class="reference" aria-labelledby="ref-title" aria-hidden="true"></aside>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

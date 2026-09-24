@@ -1,0 +1,7 @@
+// big-immediate-x.lmc - LMC-X (NON-OCR extension). Because the operand is its own word, an immediate
+// can be any value 0-999 (not just 0-99).
+// Output: 900
+        LDA #500
+        ADD #400
+        OUT
+        HLT

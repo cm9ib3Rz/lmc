@@ -1,0 +1,27 @@
+// array-sum-indexed.lmc - OPTIONAL EXTENSION, my own illustration (NOT from OCR).
+// Self-modifying code: instructions are just numbers in memory, so a program can change itself.
+// To walk along an array, the program rewrites its own first instruction
+// (LDA data -> LDA data+1 -> ...) by adding 1 to the instruction word itself.
+// Layout is hand-fixed: `data` is mailbox 15, so the first instruction is 515 (LDA 15)
+// and `lastins` = 520 (LDA 20) marks "one past the end of the array".
+// Output: 24  (4+7+1+9+3)
+loop    LDA data        // mailbox 0 - this instruction gets modified each pass
+        ADD total
+        STA total
+        LDA loop        // read the instruction word itself (e.g. 515)
+        ADD one         // 516 = LDA 16, i.e. the next array element
+        STA loop        // write it back over mailbox 0
+        SUB lastins
+        BRZ finished
+        BRA loop
+finished LDA total
+        OUT
+        HLT
+total   DAT 0
+one     DAT 1
+lastins DAT 520
+data    DAT 4
+        DAT 7
+        DAT 1
+        DAT 9
+        DAT 3

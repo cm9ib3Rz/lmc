@@ -1,0 +1,12 @@
+// pointer-x.lmc - LMC-X (NON-OCR extension). INDIRECT addressing: ptr holds the ADDRESS of the data.
+// Instructions are two words long, so `target` lands in mailbox 12 and `ptr DAT 12` is hand-fixed.
+// Output: 42, 7
+        LDA (ptr)       // ACC <- [[ptr]] = [12] = 42
+        OUT
+        LDA #7          // immediate
+        STA (ptr)       // [[ptr]] <- 7, i.e. mailbox 12 becomes 7
+        LDA (ptr)
+        OUT
+        HLT
+ptr     DAT 12
+target  DAT 42

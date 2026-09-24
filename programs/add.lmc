@@ -1,0 +1,9 @@
+// add.lmc - input two numbers, output their sum
+// Input: 5, 3      Output: 8
+        INP
+        STA first
+        INP
+        ADD first
+        OUT
+        HLT
+first   DAT

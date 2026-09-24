@@ -1,0 +1,24 @@
+// divide.lmc - integer division by repeated subtraction (divisor must be > 0)
+// Input: 17, 5     Output: 3 (quotient), 2 (remainder)
+        INP
+        STA rem
+        INP
+        STA div
+loop    LDA rem
+        SUB div
+        BRP more        // rem - div >= 0, so subtract once more
+        BRA done
+more    STA rem         // ACC already holds rem - div
+        LDA quo
+        ADD one
+        STA quo
+        BRA loop
+done    LDA quo
+        OUT
+        LDA rem
+        OUT
+        HLT
+rem     DAT
+div     DAT
+quo     DAT 0
+one     DAT 1

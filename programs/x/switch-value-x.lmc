@@ -1,0 +1,23 @@
+// switch-value-x.lmc - read the three switches as a binary number and output its value each time it changes
+// (extended LMC with the peripherals, NOT part of OCR's LMC)
+// switch3 counts 4, switch2 counts 2 and switch1 counts 1, so 3 bits give 0 to 7.
+// value = 4 x switch3 + 2 x switch2 + switch1, worked out with additions because the LMC cannot multiply.
+// Run it at Medium or Fast (not Instant), then click the switches. Press Pause to stop it.
+// Change one switch at a time. The program reads the three switches one after another, so if two changed while it
+// was halfway through reading them it could report a value in between. Real hardware has the same problem.
+loop    LDA switch3
+        ADD switch3     // 2 x switch3
+        ADD switch2
+        STA t           // t = 2 x switch3 + switch2
+        ADD t           // 4 x switch3 + 2 x switch2
+        ADD switch1
+        STA value
+        SUB last
+        BRZ loop        // the same as last time: nothing to report
+        LDA value
+        STA last
+        OUT             // a new value: output it
+        BRA loop
+t       DAT
+value   DAT
+last    DAT 999         // 999 is never a real value, so the first pass always outputs

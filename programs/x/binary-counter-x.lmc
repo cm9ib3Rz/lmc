@@ -1,0 +1,47 @@
+// binary-counter-x.lmc - the three lamps count from 0 to 7 in binary, over and over
+// (extended LMC with the peripherals, NOT part of OCR's LMC)
+// lamp3 is the 4s place, lamp2 the 2s place and lamp1 the 1s place, so 5 = 4 + 1 lights lamp3 and lamp1.
+// Each place is found by trying to take its value away: if that leaves 0 or more, the place is 1.
+// Run it at Fast (not Instant) and watch the lamps. Press Pause to stop it.
+        LDA #0
+        STA n
+show    LDA n
+        STA r           // r = the part of n still to show
+        SUB #4
+        BRP has4        // r is 4 or more, so the 4s place is 1
+        LDA #0
+        STA lamp3
+        BRA twos
+has4    STA r           // r = r - 4 (the accumulator holds it)
+        LDA #1
+        STA lamp3
+twos    LDA r
+        SUB #2
+        BRP has2        // r is 2 or more, so the 2s place is 1
+        LDA #0
+        STA lamp2
+        BRA ones
+has2    STA r           // r = r - 2
+        LDA #1
+        STA lamp2
+ones    LDA r           // what is left is 0 or 1: the 1s place
+        STA lamp1
+        LDA #30
+        STA d           // a short pause so the pattern can be seen
+pause   LDA d
+        SUB #1
+        STA d
+        BRZ next
+        BRA pause
+next    LDA n
+        ADD #1
+        STA n
+        SUB #8
+        BRZ wrap        // past 7: back to 0
+        BRA show
+wrap    LDA #0
+        STA n
+        BRA show
+n       DAT
+r       DAT
+d       DAT

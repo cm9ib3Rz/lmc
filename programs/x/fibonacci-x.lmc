@@ -1,0 +1,26 @@
+// fibonacci-x.lmc - output the first 10 Fibonacci numbers (extended LMC, NOT part of OCR's LMC)
+// IMMEDIATE values: LDA #1, LDA #10 and SUB #1 use the number itself, so no `DAT` constants are needed.
+// Output: 1 1 2 3 5 8 13 21 34 55
+        LDA #1
+        STA a           // a = 1
+        STA b           // b = 1 (the accumulator still holds 1)
+        LDA #10
+        STA count       // 10 numbers to output
+loop    LDA a
+        OUT             // output a
+        ADD b
+        STA next        // next = a + b
+        LDA b
+        STA a           // a = b
+        LDA next
+        STA b           // b = next
+        LDA count
+        SUB #1
+        STA count
+        BRZ done
+        BRA loop
+done    HLT
+a       DAT
+b       DAT
+next    DAT
+count   DAT

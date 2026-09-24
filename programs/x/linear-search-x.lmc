@@ -1,0 +1,29 @@
+// linear-search-x.lmc - look for a number in a row of 8 (extended LMC, NOT part of OCR's LMC)
+// Input: a number to find.  Output: its position in the row, counting from 0, or 999 if it is not there.
+// The row holds 12 7 33 5 21 8 19 4.   Input: 33  ->  Output: 2      Input: 50  ->  Output: 999
+        INP
+        STA target
+        LDX #0          // start at the first place in the row
+look    LDA data,X      // data[X]
+        SUB target
+        BRZ found       // 0 means data[X] equals the target
+        INX
+        TXA
+        SUB #8          // looked at all 8?
+        BRZ missing
+        BRA look
+found   TXA             // X is the position
+        OUT
+        HLT
+missing LDA #999
+        OUT
+        HLT
+target  DAT
+data    DAT 12
+        DAT 7
+        DAT 33
+        DAT 5
+        DAT 21
+        DAT 8
+        DAT 19
+        DAT 4

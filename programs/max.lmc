@@ -1,0 +1,17 @@
+// max.lmc - input two numbers, output the larger (selection with BRP)
+// Input: 4, 9      Output: 9
+// Input: 9, 4      Output: 9
+        INP
+        STA a
+        INP
+        STA b
+        SUB a           // ACC = b - a
+        BRP bbig        // b - a >= 0 so b is at least as large
+        LDA a
+        OUT
+        HLT
+bbig    LDA b
+        OUT
+        HLT
+a       DAT
+b       DAT

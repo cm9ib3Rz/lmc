@@ -1,0 +1,27 @@
+// min10.lmc - input 10 numbers, output the smallest (a loop with a running minimum)
+// Input: 3 9 2 7 10 1 8 4 6 5      Output: 1
+        INP
+        STA min         // the first number is the smallest so far
+        LDA nine
+        STA count       // 9 numbers still to come
+loop    INP
+        STA num
+        LDA min
+        SUB num         // min - num
+        BRP smaller     // 0 or more, so num is no bigger than min
+next    LDA count
+        SUB one
+        STA count
+        BRZ done        // that was the last number
+        BRA loop
+smaller LDA num
+        STA min         // remember the new smallest
+        BRA next
+done    LDA min
+        OUT
+        HLT
+min     DAT
+num     DAT
+count   DAT
+nine    DAT 9
+one     DAT 1

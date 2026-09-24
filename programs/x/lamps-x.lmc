@@ -1,0 +1,11 @@
+// lamps-x.lmc - each lamp copies its switch (extended LMC with the peripherals, NOT part of OCR's LMC)
+// The peripherals are memory-mapped: `LDA switch1` reads mailbox 94, and `STA lamp1` writes mailbox 97.
+// A switch holds 1 when it is up and 0 when it is down. A lamp is lit while its mailbox holds anything but 0.
+// Run it at Medium or Fast (not Instant), then click the switches. Press Pause to stop it.
+loop    LDA switch1
+        STA lamp1
+        LDA switch2
+        STA lamp2
+        LDA switch3
+        STA lamp3
+        BRA loop

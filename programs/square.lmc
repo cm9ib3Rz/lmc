@@ -1,0 +1,27 @@
+// square.lmc - read numbers and output the square of each; stop when 0 is entered
+// Input: 5, 12, 0      Output: 25, 144
+// n * n is found by adding n to a total, n times. Each square starts again from 0.
+// A mailbox holds at most 999, so the biggest square is 31 * 31 = 961: keep inputs to 31 or less.
+start   INP
+        BRZ finish       // 0 ends the program
+        STA n
+        STA count        // how many more additions are needed
+        LDA zero
+        STA total        // start every square from 0
+loop    LDA total
+        ADD n
+        STA total
+        LDA count
+        SUB one
+        STA count
+        BRZ show         // n additions done
+        BRA loop
+show    LDA total
+        OUT
+        BRA start        // ask for the next number
+finish  HLT
+n       DAT
+count   DAT
+total   DAT
+one     DAT 1
+zero    DAT 0

@@ -1,0 +1,21 @@
+// array-sum-x.lmc - LMC-X (NON-OCR extension). INDEXED addressing with the index register X.
+// Compare with ../array-sum-indexed.lmc, which fakes this with self-modifying code.
+// Output: 24  (4+7+1+9+3)
+        LDX #0          // X = 0
+loop    LDA data,X      // ACC <- [data + X]
+        ADD total
+        STA total
+        INX             // X = X + 1
+        TXA             // ACC = X
+        SUB #5          // 5 elements?
+        BRZ done
+        BRA loop
+done    LDA total
+        OUT
+        HLT
+total   DAT 0
+data    DAT 4
+        DAT 7
+        DAT 1
+        DAT 9
+        DAT 3

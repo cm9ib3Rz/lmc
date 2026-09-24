@@ -1,0 +1,31 @@
+// linked-list-x.lmc - follow a linked list and add up its values (extended LMC, NOT part of OCR's LMC)
+// Each node is two mailboxes: its VALUE, then the ADDRESS of the next node (0 marks the end).
+// The nodes are stored out of order in memory; only the pointers put them in order: head -> 10 -> 20 -> 30.
+// INDIRECT addressing follows a pointer: `LDA (ptr)` loads from the mailbox that ptr holds the address of.
+// INDEXED addressing reaches the second mailbox of the node: `LDA 1,X` with X = ptr is mailbox ptr + 1.
+// The node addresses are written in by hand (a DAT holds a number, not a label).
+// Output: 10 20 30 60
+        LDA head
+        STA ptr         // ptr = the address of the first node
+loop    LDA ptr
+        BRZ done        // a pointer of 0 marks the end of the list
+        LDA (ptr)       // ACC = the value in the node that ptr points to
+        OUT
+        ADD total
+        STA total       // total = total + value
+        LDX ptr
+        LDA 1,X         // the node's second mailbox: the address of the next node
+        STA ptr
+        BRA loop
+done    LDA total
+        OUT
+        HLT
+ptr     DAT
+total   DAT
+head    DAT 32
+node3   DAT 30
+        DAT 0
+node1   DAT 10
+        DAT 34
+node2   DAT 20
+        DAT 30

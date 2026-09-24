@@ -1,0 +1,47 @@
+// traffic-lights-x.lmc - traffic lights on the three lamps (extended LMC with the peripherals, NOT part of OCR's LMC)
+// lamp1 is red, lamp2 is amber and lamp3 is green. The lights go red, red and amber, green, amber, and round again.
+// A table holds each stage: which lamps are on and how long the stage lasts. INDEXED addressing walks down it:
+// the labels red, amber, green and time name the four columns of the first row, so `red,X` is the red column of
+// row X, `amber,X` the amber column, and so on. X moves on by 4 for each row.
+// Run it at Fast (not Instant) and watch the lamps. Press Pause to stop it.
+loop    LDX i
+        LDA red,X       // 1 = lamp on
+        STA lamp1
+        LDA amber,X
+        STA lamp2
+        LDA green,X
+        STA lamp3
+        LDA time,X      // how long this stage lasts
+        STA d
+wait    LDA d
+        SUB #1
+        STA d
+        BRZ next
+        BRA wait
+next    LDA i
+        ADD #4          // on to the next row of the table
+        STA i
+        SUB #16         // 4 rows of 4
+        BRZ wrap
+        BRA loop
+wrap    LDA #0
+        STA i
+        BRA loop
+i       DAT
+d       DAT
+red     DAT 1           // stage 1: red for a while
+amber   DAT 0
+green   DAT 0
+time    DAT 40
+        DAT 1           // stage 2: red and amber together, briefly
+        DAT 1
+        DAT 0
+        DAT 10
+        DAT 0           // stage 3: green for a while
+        DAT 0
+        DAT 1
+        DAT 40
+        DAT 0           // stage 4: amber, briefly
+        DAT 1
+        DAT 0
+        DAT 10

@@ -1,0 +1,30 @@
+{
+  "name": "lmc",
+  "version": "1.0.0",
+  "description": "Little Man Computer (LMC) simulator for teaching OCR A Level Computer Science assembly language",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cm9ib3Rz/lmc.git"
+  },
+  "homepage": "https://cm9ib3Rz.github.io/lmc/",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "typescript": "^5.5.3",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  },
+  "private": true
+}

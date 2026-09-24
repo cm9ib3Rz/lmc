@@ -1,0 +1,54 @@
+// sieve.lmc - Sieve of Eratosthenes: output every prime up to 50 (OPTIONAL EXTENSION, not from OCR)
+// Output: 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47
+//
+// The idea: keep a row of flags, one per number. 0 means "might be prime", 1 means "crossed out".
+// Walk through the numbers; an uncrossed number is prime, so output it and cross out its multiples.
+//
+// The LMC cannot say "flag number n", so this program builds the instruction it needs and stores it
+// over the placeholder `read` or `write` below. That works because instructions are just numbers in
+// memory. Each placeholder holds 5xx or 3xx with the address of flag[0]; adding n gives flag[n].
+// There are only 100 mailboxes, so 50 is about as far as this layout goes (the flags start at mailbox 42).
+// Run it on Fast or Instant: it executes about 1450 instructions.
+        LDA read        // copy the two placeholder instructions (5xx and 3xx, aimed at flag[0])
+        STA lbase
+        LDA write
+        STA sbase
+        LDA two
+        STA p           // p = 2, the first number to test
+outer   LDA p
+        SUB limit1      // p - 51
+        BRP done        // p has gone past 50: finished
+        LDA lbase
+        ADD p
+        STA read        // rewrite the placeholder as "LDA flag[p]"
+read    LDA flag        // ACC = flag[p]  (this instruction is rewritten each time)
+        BRZ prime       // not crossed out, so p is prime
+next    LDA p
+        ADD one
+        STA p           // p = p + 1
+        BRA outer
+prime   LDA p
+        OUT             // output the prime
+        ADD p
+        STA m           // m = 2p, the first multiple to cross out
+mark    LDA m
+        SUB limit1
+        BRP next        // m has gone past 50: on to the next p
+        LDA sbase
+        ADD m
+        STA write       // rewrite the placeholder as "STA flag[m]"
+        LDA one
+write   STA flag        // flag[m] = 1: crossed out  (this instruction is rewritten each time)
+        LDA m
+        ADD p
+        STA m           // m = m + p, the next multiple
+        BRA mark
+done    HLT
+lbase   DAT
+sbase   DAT
+p       DAT
+m       DAT
+two     DAT 2
+one     DAT 1
+limit1  DAT 51
+flag    DAT             // the flags are the empty mailboxes from here on (all 0 to start with)

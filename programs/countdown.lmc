@@ -1,0 +1,9 @@
+// countdown.lmc - input n, output n, n-1, ... 1 (iteration with BRZ / BRA)
+// Input: 4         Output: 4, 3, 2, 1
+        INP
+loop    BRZ end         // stop when ACC reaches 0
+        OUT
+        SUB one
+        BRA loop
+end     HLT
+one     DAT 1

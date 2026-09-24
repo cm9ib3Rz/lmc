@@ -1,0 +1,11 @@
+// sum-until-zero.lmc - running total; a 0 input is the sentinel that ends the loop
+// Input: 10, 20, 5, 0     Output: 35
+loop    INP
+        BRZ finish
+        ADD total
+        STA total
+        BRA loop
+finish  LDA total
+        OUT
+        HLT
+total   DAT

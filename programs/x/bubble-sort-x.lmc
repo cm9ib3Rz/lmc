@@ -1,0 +1,49 @@
+// bubble-sort-x.lmc - input 6 numbers, sort them into ascending order, output them (extended LMC, NOT part of OCR's LMC)
+// INDEXED loads and stores let the program compare neighbours and swap them in the row.
+// `first` is the first number and `second` is the next mailbox, so `first,X` is data[X] and `second,X` is data[X+1].
+// Input: 5 3 8 1 9 2      Output: 1 2 3 5 8 9
+        LDX #0
+read    INP
+        STA first,X     // data[X] = the number just typed
+        INX
+        TXA
+        SUB #6
+        BRZ sort
+        BRA read
+sort    LDA #5
+        STA passes      // 5 passes; each pass moves the largest remaining number to the end
+pass    LDX #0          // start at the first pair
+compare LDA first,X     // data[X]
+        SUB second,X    // data[X] - data[X+1]
+        BRZ noswap      // equal: leave them
+        BRP swap        // data[X] is bigger: swap them
+noswap  INX
+        TXA
+        SUB #5          // compared all 5 pairs?
+        BRZ endpass
+        BRA compare
+swap    LDA first,X
+        STA temp        // temp = data[X]
+        LDA second,X
+        STA first,X     // data[X] = data[X+1]
+        LDA temp
+        STA second,X    // data[X+1] = temp
+        BRA noswap
+endpass LDA passes
+        SUB #1
+        STA passes
+        BRZ show
+        BRA pass
+show    LDX #0
+print   LDA first,X
+        OUT
+        INX
+        TXA
+        SUB #6
+        BRZ done
+        BRA print
+done    HLT
+passes  DAT
+temp    DAT
+first   DAT
+second  DAT             // the rest of the row is the empty mailboxes from here on

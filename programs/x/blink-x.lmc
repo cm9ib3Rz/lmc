@@ -1,0 +1,13 @@
+// blink-x.lmc - blink lamp1: on for half a second, off for half a second, forever
+// (extended LMC with the peripherals, NOT part of OCR's LMC)
+// SLEEP n waits n milliseconds (n is a number from 0 to 999). The machine only asks for the wait; the simulator does it.
+// Choose the "Real time" speed and press Run. (Fast also works but adds a delay to every instruction, so the blinks
+// are slower than 500 ms. Instant skips every SLEEP.) Press Pause to stop it.
+// Try changing the numbers, or blink lamp2 and lamp3 as well.
+loop    LDA #1
+        STA lamp1       // lamp on
+        SLEEP 500       // wait half a second
+        LDA #0
+        STA lamp1       // lamp off
+        SLEEP 500       // wait again
+        BRA loop

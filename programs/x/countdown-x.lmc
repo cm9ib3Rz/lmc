@@ -1,0 +1,9 @@
+// countdown-x.lmc - LMC-X (NON-OCR extension). IMMEDIATE addressing: SUB #1 needs no `one DAT 1`.
+// Compare with ../countdown.lmc
+// Input: 4         Output: 4, 3, 2, 1
+        INP
+loop    BRZ end
+        OUT
+        SUB #1          // immediate: subtract the number 1 itself
+        BRA loop
+end     HLT

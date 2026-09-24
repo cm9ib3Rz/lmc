@@ -1,0 +1,26 @@
+// reverse-x.lmc - input 5 numbers, then output them in reverse order (extended LMC, NOT part of OCR's LMC)
+// INDEXED store then load: `STA data,X` puts each input in the next mailbox of a row;
+// `LDA data,X` reads them back, counting down.
+// Input: 1 2 3 4 5      Output: 5 4 3 2 1
+        LDX #0          // X = 0: the first place in the row
+read    INP
+        STA data,X      // data[X] = the number just typed
+        INX
+        TXA
+        SUB #5          // have 5 numbers been read?
+        BRZ back
+        BRA read
+back    LDA #5
+        STA i           // i = 5
+show    LDA i
+        SUB #1
+        STA i           // i = i - 1
+        LDX i           // X = i
+        LDA data,X      // data[i]
+        OUT
+        LDA i
+        BRZ done        // i reached 0: that was the first number
+        BRA show
+done    HLT
+i       DAT
+data    DAT             // the row is the empty mailboxes from here on

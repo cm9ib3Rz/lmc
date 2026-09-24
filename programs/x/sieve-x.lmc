@@ -1,0 +1,40 @@
+// sieve-x.lmc - Sieve of Eratosthenes with an index register: output every prime up to 45
+// (extended LMC, NOT part of OCR's LMC).
+// Compare with ../sieve.lmc, which does the same job with self-modifying code.
+// Output: 2 3 5 7 11 13 17 19 23 29 31 37 41 43
+//
+// flag,X is a row of flags, one per number: 0 means "might be prime", 1 means "crossed out".
+// Walk through the numbers; an uncrossed number is prime, so output it and cross out its multiples.
+// Only 100 mailboxes: two-word instructions push the flags up to mailbox 54, so 45 is the limit here.
+// (In the peripherals panel the last few flags light the lamps, which is harmless.)
+// Run it on Fast or Instant: it executes about 1100 instructions.
+        LDA #2
+        STA p           // p = 2, the first number to test
+outer   LDA p
+        SUB #46         // p - 46
+        BRP done        // p has gone past 45: finished
+        LDX p
+        LDA flag,X      // ACC = flag[p]
+        BRZ prime       // not crossed out, so p is prime
+next    LDA p
+        ADD #1
+        STA p           // p = p + 1
+        BRA outer
+prime   LDA p
+        OUT             // output the prime
+        ADD p
+        STA m           // m = 2p, the first multiple to cross out
+mark    LDA m
+        SUB #46
+        BRP next        // m has gone past 45: on to the next p
+        LDX m
+        LDA #1
+        STA flag,X      // flag[m] = 1: crossed out
+        LDA m
+        ADD p
+        STA m           // m = m + p, the next multiple
+        BRA mark
+done    HLT
+p       DAT
+m       DAT
+flag    DAT             // the flags are the empty mailboxes from here on (all 0 to start with)

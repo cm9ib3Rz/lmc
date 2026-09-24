@@ -1,0 +1,31 @@
+// max10-x.lmc - input 10 numbers into a row, then find the largest (extended LMC, NOT part of OCR's LMC)
+// Compare with ../max10.lmc, which never stores the numbers. Keeping them in a row (INDEXED addressing)
+// means the program could look at them again, for example to find the smallest as well.
+// Input: 3 9 2 7 10 1 8 4 6 5      Output: 10
+        LDX #0
+read    INP
+        STA data,X      // data[X] = the number just typed
+        INX
+        TXA
+        SUB #10         // have 10 numbers been read?
+        BRZ scan
+        BRA read
+scan    LDA data        // the first number is the largest so far
+        STA max
+        LDX #1          // start looking at the second number
+look    LDA data,X
+        SUB max         // data[X] - max
+        BRP bigger      // 0 or more: data[X] is at least as big as max
+after   INX
+        TXA
+        SUB #10
+        BRZ done        // looked at all 10
+        BRA look
+bigger  LDA data,X
+        STA max         // remember the new largest
+        BRA after
+done    LDA max
+        OUT
+        HLT
+max     DAT
+data    DAT             // the row is the empty mailboxes from here on

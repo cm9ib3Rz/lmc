@@ -1,0 +1,17 @@
+// double-array-x.lmc - LMC-X (NON-OCR extension). Indexed STORE as well as indexed load/add.
+// Doubles each element in place and outputs it.
+// Output: 10, 16, 20
+        LDX #0
+loop    LDA data,X
+        ADD data,X
+        STA data,X      // indexed store
+        OUT
+        INX
+        TXA
+        SUB #3
+        BRZ done
+        BRA loop
+done    HLT
+data    DAT 5
+        DAT 8
+        DAT 10
